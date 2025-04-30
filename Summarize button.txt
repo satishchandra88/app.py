@@ -1,0 +1,24 @@
+document.getElementById("summarizeBtn").addEventListener("click", async () => {
+  const inputText = document.getElementById("inputText").value;
+
+  try {
+    const response = await fetch("https://web-production-d7ef.up.railway.app/summarize", {
+      method: "POST",  // Make sure it's POST
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text: inputText })  // Sending the input text as JSON
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      document.getElementById("outputSummary").innerText = data.summary;
+    } else {
+      console.error("Error:", response.statusText);
+      document.getElementById("outputSummary").innerText = "Error: Could not summarize!";
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    document.getElementById("outputSummary").innerText = "Something went wrong!";
+  }
+});
