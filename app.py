@@ -5,7 +5,6 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 app = Flask(__name__)
 CORS(app)
 
-# Load tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
 model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
 
@@ -13,8 +12,16 @@ model = AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
 def summarize():
     data = request.get_json()
     text = data.get('text', '')
+
     inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True)
-    summary_ids = model.generate(inputs["input_ids"], max_length=150, min_length=40, length_penalty=2.0, num_beams=4, early_stopping=True)
+    summary_ids = model.generate(
+        inputs["input_ids"],
+        max_length=150,
+        min_length=40,
+        length_penalty=2.0,
+        num_beams=4,
+        early_stopping=True
+    )
     summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
     return jsonify({"summary": summary})
 
